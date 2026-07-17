@@ -1,0 +1,25 @@
+# Gitleaks configuration for BKKT public alpha.
+# Allowlist only synthetic fixtures used by OSS hygiene tests.
+title = "bkkt"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Synthetic AWS example key used by OSS hygiene unit tests"
+paths = [
+  '''tests/test_oss_hygiene\.py''',
+]
+regexes = [
+  '''AKIAIOSFODNN7EXAMPLE''',
+]
+
+[[allowlists]]
+description = "Synthetic private-key fixture used by OSS hygiene unit tests"
+paths = [
+  '''tests/test_oss_hygiene\.py''',
+]
+regexTarget = "match"
+regexes = [
+  '''-----BEGIN RSA PRIVATE KEY-----''',
+]

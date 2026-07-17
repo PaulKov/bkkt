@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish GitHub prerelease + PyPI
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Sync dependencies
+        run: uv sync --all-extras
+
+      - name: Verify tag matches package version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          EXPECTED_VERSION="${TAG#v}"
+          PKG_VERSION="$(uv run python -c 'import tomllib; print(tomllib.load(open("pyproject.toml","rb"))["project"]["version"])')"
+          MOD_VERSION="$(uv run python -c 'import connectctl; print(connectctl.__version__)')"
+          echo "tag=$EXPECTED_VERSION pyproject=$PKG_VERSION module=$MOD_VERSION"
+          test "$EXPECTED_VERSION" = "$PKG_VERSION"
+          test "$EXPECTED_VERSION" = "$MOD_VERSION"
+
+      - name: Test + hygiene gates
+        run: |
+          uv run pytest -q
+          uv run bkkt oss hygiene --scope repository
+          uv run bkkt oss readiness
+
+      - name: Build
+        run: uv build
+
+      - name: Twine check
+        run: uvx twine check dist/*
+
+      - name: Create GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "bkkt ${GITHUB_REF_NAME#v}" \
+            --notes-file CHANGELOG.md \
+            --prerelease \
+            --verify-tag
+
+      - name: Publish to PyPI (Trusted Publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/

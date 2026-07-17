@@ -1,0 +1,42 @@
+version: 1
+connectors_root: connectors
+default_cluster: local
+
+clusters:
+  local:
+    dev:
+      connect:
+        scheme: http
+        port: 8083
+        hosts: ["localhost"]
+      kafka:
+        bootstrap_servers: ["localhost:19092"]
+      schema_registry:
+        urls: ["http://localhost:8081"]
+        timeout_seconds: 10
+
+gitlab:
+  api_url: https://gitlab.example.com/api/v4
+  project_id: ""
+
+naming:
+  enabled: true
+  strict: true
+  rules:
+    - id: source_default
+      applies_to:
+        type: [source]
+      template: "{env}.{domain}.{dataset}.source.{system}.{index}"
+    - id: sink_default
+      applies_to:
+        type: [sink]
+      template: "{env}.{domain}.{dataset}.sink.{layer}.{system}.{index}"
+
+sync:
+  prune:
+    allow_regex: ["^{env}\\."]
+    deny_regex: ["^_"]
+
+safety:
+  direct_put:
+    enabled: false

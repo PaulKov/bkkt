@@ -1,0 +1,589 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "connectctl.yaml schema",
+  "type": "object",
+  "required": [
+    "clusters"
+  ],
+  "properties": {
+    "default_cluster": {
+      "type": "string",
+      "description": "Имя cluster group по умолчанию (ключ в clusters)"
+    },
+    "default_cluster_name": {
+      "type": "string",
+      "description": "Backwards-compatible alias для default_cluster"
+    },
+    "connectors_root": {
+      "type": "string",
+      "description": "Корень каталога с коннекторами (relative path)"
+    },
+    "ignore_dirs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Каталоги, которые repo loader игнорирует"
+    },
+    "clusters": {
+      "type": "object",
+      "description": "Cluster groups: <group> -> <env> -> connect/kafka settings",
+      "additionalProperties": {
+        "$ref": "#/definitions/ClusterGroup"
+      }
+    },
+    "cluster_lifecycle": {
+      "$ref": "#/definitions/ClusterLifecycleRoot"
+    },
+    "tags": {
+      "$ref": "#/definitions/TagsSettings"
+    },
+    "gitlab": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "naming": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "config_tests": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "functions": {
+      "type": "object",
+      "description": "Repo-local BKKT placeholder functions configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable repo-local Python function discovery"
+        },
+        "paths": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "Repo-relative Python file or directory paths with @bkkt_function definitions"
+        },
+        "allow_repo_python": {
+          "type": "boolean",
+          "description": "Allow trusted repo-local Python execution during render"
+        },
+        "runtime": {
+          "type": "object",
+          "description": "Runtime safety policy for repo-local functions",
+          "properties": {
+            "max_call_ms": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Soft elapsed-time budget for one function call"
+            },
+            "allowed_capabilities": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "description": "Allowed declared capabilities. Empty means compatibility mode; '*' allows all."
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "var_providers": {
+      "type": "object",
+      "description": "Repo-local BKKT variable provider configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable repo-local Python variable provider discovery"
+        },
+        "paths": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "Repo-relative Python file or directory paths with @bkkt_var_provider definitions"
+        },
+        "allow_repo_python": {
+          "type": "boolean",
+          "description": "Allow trusted repo-local Python execution during variable provider evaluation"
+        },
+        "runtime": {
+          "type": "object",
+          "description": "Runtime safety policy for repo-local variable providers",
+          "properties": {
+            "max_call_ms": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Soft elapsed-time budget for one provider call"
+            },
+            "allowed_capabilities": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "description": "Allowed declared capabilities. Empty means compatibility mode; '*' allows all."
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "computed_vars": {
+      "type": "object",
+      "description": "Repo-local BKKT computed variables configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable repo-local Python computed variable discovery"
+        },
+        "paths": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ],
+          "description": "Repo-relative Python file or directory paths with @bkkt_computed_var definitions"
+        },
+        "allow_repo_python": {
+          "type": "boolean",
+          "description": "Allow trusted repo-local Python execution during computed var evaluation"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schema_registry_preflight": {
+      "type": "object",
+      "description": "Schema Registry preflight policy registry: allowlist, owners and ADR links for schema-affecting migrations",
+      "additionalProperties": true
+    },
+    "export": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "sync": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true,
+  "definitions": {
+    "ClusterGroup": {
+      "type": "object",
+      "properties": {
+        "dev": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ClusterEnvConfig"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ClusterEnvConfig"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "prod": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ClusterEnvConfig"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "lifecycle": {
+          "$ref": "#/definitions/ClusterLifecycle"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ClusterEnvConfig": {
+      "type": "object",
+      "required": [
+        "connect"
+      ],
+      "properties": {
+        "connect": {
+          "$ref": "#/definitions/ConnectConfig"
+        },
+        "kafka": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/KafkaConfig"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "render": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/RenderConfig"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "lifecycle": {
+          "$ref": "#/definitions/ClusterLifecycle"
+        }
+      },
+      "additionalProperties": true
+    },
+    "ConnectConfig": {
+      "type": "object",
+      "properties": {
+        "scheme": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "http",
+                "https"
+              ],
+              "default": "http"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "hosts": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "description": "Список хостов Kafka Connect REST (без порта)"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "port": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535,
+              "default": 8083
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        }
+      },
+      "required": [
+        "hosts"
+      ],
+      "additionalProperties": true
+    },
+    "KafkaConfig": {
+      "type": "object",
+      "properties": {
+        "bootstrap_servers": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string",
+              "description": "bootstrap.servers как строка (например через env var или comma-separated)"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "security_protocol": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "sasl_mechanism": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "sasl_plain_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "sasl_plain_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "ssl_cafile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "auth": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "iam",
+                "plain"
+              ]
+            },
+            "iam_region": {
+              "type": "string"
+            },
+            "aws_profile": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "RenderConfig": {
+      "type": "object",
+      "properties": {
+        "prune_config_keys": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        },
+        "vars": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": true
+            },
+            {
+              "$ref": "#/definitions/InheritExpr"
+            }
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "TagsSettings": {
+      "type": "object",
+      "properties": {
+        "definitions": {
+          "type": "object",
+          "description": "tags.<tag> -> params (e.g. cluster)",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "cluster": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "hard_conflict_params": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Параметры, по которым конфликт тегов всегда фатален (например: cluster)"
+        }
+      },
+      "additionalProperties": true
+    },
+    "ClusterLifecycle": {
+      "type": "object",
+      "description": "Lifecycle metadata for a Kafka Connect cluster scope. disabled=true skips runtime operations and requires a reason.",
+      "properties": {
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ticket": {
+          "type": "string"
+        },
+        "until": {
+          "type": "string"
+        }
+      },
+      "if": {
+        "properties": {
+          "disabled": {
+            "const": true
+          }
+        },
+        "required": [
+          "disabled"
+        ]
+      },
+      "then": {
+        "required": [
+          "reason"
+        ]
+      },
+      "additionalProperties": false
+    },
+    "ClusterLifecycleRoot": {
+      "type": "object",
+      "properties": {
+        "overrides": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ClusterLifecycleOverride"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "ClusterLifecycleOverride": {
+      "type": "object",
+      "properties": {
+        "cluster": {
+          "type": "string",
+          "default": "all"
+        },
+        "env": {
+          "type": "string",
+          "default": "all"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ticket": {
+          "type": "string"
+        },
+        "until": {
+          "type": "string"
+        }
+      },
+      "if": {
+        "properties": {
+          "disabled": {
+            "const": true
+          }
+        },
+        "required": [
+          "disabled"
+        ]
+      },
+      "then": {
+        "required": [
+          "reason"
+        ]
+      },
+      "additionalProperties": false
+    },
+    "InheritExpr": {
+      "type": "string",
+      "description": "Выражение наследования из другой cluster group/env: from_cluster_group_env(<group>, '<selector>')",
+      "pattern": "^from_cluster_group_env\\([\\w-]+\\s*,\\s*'[^']+'\\s*\\)$"
+    }
+  }
+}

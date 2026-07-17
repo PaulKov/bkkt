@@ -1,0 +1,9 @@
+{
+  "name": "dev.e2e.filesource.source.file.0",
+  "config": {
+    "connector.class": "org.apache.kafka.connect.file.FileStreamSourceConnector",
+    "tasks.max": "1",
+    "file": "/tmp/e2e/source.txt",
+    "topic": "e2e_source"
+  }
+}

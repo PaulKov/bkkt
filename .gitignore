@@ -1,0 +1,33 @@
+.venv/*
+.idea/
+.DS_Store
+logs/
+test
+rendered/
+__pycache__/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+/.cache/
+dist/
+build/
+
+# Local secrets and development artifacts
+prod-aws-credentials.toml
+*.credentials.toml
+.env
+.env.*
+dist/
+.venv/
+venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local agent / build scratch
+.superpowers/
+dist/
+*.egg-info/

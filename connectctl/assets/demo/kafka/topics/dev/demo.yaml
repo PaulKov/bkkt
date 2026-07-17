@@ -1,0 +1,13 @@
+topics:
+  - name: demo.orders
+    partitions: 3
+    replication_factor: 1
+    configs:
+      cleanup.policy: delete
+      retention.ms: "86400000"
+  - name: demo.orders.deadletter
+    partitions: 1
+    replication_factor: 1
+    configs:
+      cleanup.policy: delete
+      retention.ms: "86400000"

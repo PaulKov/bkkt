@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Connector manifest fragment schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Имя коннектора (может быть переопределено слоями). Если не задано - может быть выведено из имени файла."
+    },
+    "config": {
+      "type": "object",
+      "description": "Kafka Connect config. Содержимое зависит от connector.class."
+    },
+    "vars": {
+      "type": "object",
+      "description": "Vars для шаблонов/нейминга (мерджится слоями)."
+    },
+    "__export_comments__": {
+      "type": "object",
+      "description": "Optional export-time comments emitted by bkkt export to explain candidate overrides.",
+      "additionalProperties": true
+    },
+    "bkkt": {
+      "type": "object",
+      "description": "Meta for BKKT (not sent to Kafka Connect).",
+      "properties": {
+        "unset_config_keys": {
+          "description": "Kafka Connect config keys inherited from lower layers that must be removed from effective config.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "bkkt.unset_config_keys": {
+      "description": "Compatibility alias for bkkt.unset_config_keys.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "connectctl": {
+      "type": "object",
+      "description": "Meta для bkkt/connectctl (не отправляется в Kafka Connect)",
+      "properties": {
+        "cluster": {
+          "type": "string",
+          "description": "Явно указать cluster group для этого коннектора"
+        },
+        "tags": {
+          "description": "Теги (additive across layers). Можно строкой или списком строк.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "lifecycle": {
+          "type": "object",
+          "description": "Lifecycle guardrails for this connector or layer fragment.",
+          "properties": {
+            "disabled": {
+              "type": "boolean"
+            },
+            "reason": {
+              "type": "string"
+            },
+            "ticket": {
+              "type": "string"
+            },
+            "until": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,10 @@
+{
+  "type": "record",
+  "name": "OrderEvent",
+  "namespace": "demo.orders",
+  "fields": [
+    {"name": "order_id", "type": "string"},
+    {"name": "amount", "type": "double"},
+    {"name": "event_ts", "type": "string"}
+  ]
+}

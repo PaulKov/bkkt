@@ -1,0 +1,9 @@
+{
+  "name": "dev.e2e.filesink.sink.file.0",
+  "config": {
+    "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+    "tasks.max": "1",
+    "file": "/tmp/e2e/sink.txt",
+    "topics": "e2e_source"
+  }
+}

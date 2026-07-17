@@ -1,0 +1,58 @@
+# BKKT: pre-commit hooks (DevEx)
+#
+# Установка:
+#   pip install pre-commit
+#   pre-commit install
+#
+# Запуск вручную:
+#   pre-commit run -a
+#
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: ["--allow-multiple-documents"]
+      - id: check-json
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.7
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        # Keep scope in sync with CI `validate:mypy` (lint library code).
+        # Pre-commit passes file paths by default; we pin the entrypoint args
+        # to avoid typing the whole repo (incl. tests) in this hook.
+        pass_filenames: false
+        args: [--config-file=mypy.ini, connectctl]
+        # Pre-commit runs mypy in its own isolated env; add stub packages here.
+        additional_dependencies:
+          - types-PyYAML
+          - types-requests
+
+  - repo: local
+    hooks:
+      - id: bkkt-no-print
+        name: "BKKT: запрет print()"
+        entry: python tools/precommit_no_print.py
+        language: system
+        types: [python]
+
+      - id: bkkt-schema-validate
+        name: "BKKT: schema validate connectctl.yaml и manifests"
+        entry: python tools/precommit_schema_validate.py
+        language: system
+        files: \.(ya?ml|json)$
