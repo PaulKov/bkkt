@@ -24,30 +24,30 @@ _The section below is generated automatically by `bkkt docs update-dev-metrics`.
 **All Python files (`**/*.py`)**
 
 - Files: **715**
-- LOC: **81714**
-- SLOC: **65903**
+- LOC: **81699**
+- SLOC: **65887**
 - LOC/SLOC ratio: **1.24**
 - Smallest file by LOC: **0** (`connectctl/adapters/__init__.py`)
 - Largest file by LOC: **1406** (`connectctl/commands/vars_cmd.py`)
-- Average LOC/file: **114.29**
+- Average LOC/file: **114.26**
 - Median LOC/file: **73**
 
 **Python files excluding tests**
 
 - Files: **607**
-- LOC: **63374**
-- SLOC: **51538**
+- LOC: **63381**
+- SLOC: **51544**
 - LOC/SLOC ratio: **1.23**
 
 ### `connectctl` package footprint
 
 - Files: **605**
-- LOC: **63214**
-- SLOC: **51418**
+- LOC: **63221**
+- SLOC: **51424**
 - LOC/SLOC ratio: **1.23**
-- Average LOC/file: **104.49**
+- Average LOC/file: **104.50**
 - Median LOC/file: **69**
-- Average SLOC/file: **84.99**
+- Average SLOC/file: **85.00**
 - Median SLOC/file: **51**
 
 **Top 15 largest `connectctl` modules**
@@ -56,10 +56,10 @@ _The section below is generated automatically by `bkkt docs update-dev-metrics`.
 |---|---:|---:|
 | `connectctl/commands/vars_cmd.py` | 1406 | 1221 |
 | `connectctl/commands/functions_cmd.py` | 1075 | 944 |
-| `connectctl/commands/registry.py` | 1048 | 1009 |
+| `connectctl/commands/registry.py` | 1046 | 1007 |
 | `connectctl/services/validate_connect_service.py` | 720 | 631 |
 | `connectctl/services/init/template_engine.py` | 661 | 533 |
-| `connectctl/services/oss_hygiene.py` | 640 | 543 |
+| `connectctl/services/oss_hygiene.py` | 648 | 551 |
 | `connectctl/kafka/admin.py` | 626 | 542 |
 | `connectctl/services/search/query.py` | 591 | 528 |
 | `connectctl/services/connector_facts.py` | 558 | 483 |

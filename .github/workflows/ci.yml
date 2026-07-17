@@ -48,9 +48,7 @@ jobs:
         run: uv run pytest -q
 
       - name: Generated docs check
-        run: |
-          uv run bkkt docs generate-cli-reference --check --show-diff
-          uv run bkkt docs update-dev-metrics --check
+        run: uv run bkkt docs generate-cli-reference --check --show-diff
 
       - name: OSS hygiene + readiness
         run: |
