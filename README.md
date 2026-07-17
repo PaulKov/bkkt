@@ -21,7 +21,7 @@ Requirements: Python 3.11 or 3.12.
 ## 10-minute local demo
 
 ```bash
-bkkt demo init ./bkkt-demo
+bkkt demo init --output-dir ./bkkt-demo
 cd ./bkkt-demo
 bkkt demo up          # starts Redpanda + Kafka Connect via Docker Compose
 bkkt demo smoke       # render/validate/apply dry-run against the demo stack

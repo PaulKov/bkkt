@@ -71,5 +71,5 @@ jobs:
           uv pip install --python /tmp/bkkt-wheel-venv/bin/python dist/*.whl
           /tmp/bkkt-wheel-venv/bin/bkkt --version
           /tmp/bkkt-wheel-venv/bin/bkkt --help >/dev/null
-          /tmp/bkkt-wheel-venv/bin/bkkt demo init /tmp/bkkt-demo-wheel
+          /tmp/bkkt-wheel-venv/bin/bkkt demo init --output-dir /tmp/bkkt-demo-wheel
           /tmp/bkkt-wheel-venv/bin/bkkt demo smoke
